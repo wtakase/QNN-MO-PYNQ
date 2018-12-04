@@ -73,15 +73,12 @@ void DoCompute(ap_uint<DATAWIDTH> * in,	ap_uint<DATAWIDTH> * out,
 #pragma HLS DATAFLOW
 
     hls::stream<ap_uint<DATAWIDTH>> memInStream("memInStream");
-    hls::stream<ap_uint<DATAWIDTH>> fcStream("fcStream");
     hls::stream<ap_uint<DATAWIDTH>> memOutStream("memOutStream");
 
 #pragma HLS STREAM variable=memInStream depth=1
-#pragma HLS STREAM variable=fcStream depth=1
 #pragma HLS STREAM variable=memOutStream depth=1
 
 #pragma HLS RESOURCE variable=memInStream core=FIFO_LUTRAM
-#pragma HLS RESOURCE variable=fcStream core=FIFO_LUTRAM
 #pragma HLS RESOURCE variable=memOutStream core=FIFO_LUTRAM
 
     const unsigned int inBits = ACTIVATION_BITS * MAX_MH;
@@ -92,7 +89,7 @@ void DoCompute(ap_uint<DATAWIDTH> * in,	ap_uint<DATAWIDTH> * out,
     Mem2Stream<DATAWIDTH, paddedInBytes> (in, memInStream, paddedInBytes);
 
     StreamingFCLayer<MAX_SIMD, MAX_PE_FC, POPCOUNT_WIDTH, MAX_FC_WMEM, MAX_FC_TMEM>
-            (fcStream, memOutStream, fcWeightMem, fcThresMem, IFMCh, OFMCh, 1);
+            (memInStream, memOutStream, fcWeightMem, fcThresMem, IFMCh, OFMCh, 1);
 
     Stream2Mem<DATAWIDTH, paddedOutBytes> (memOutStream, out, paddedOutBytes);
 }

@@ -62,8 +62,7 @@ fi
 if [ -d "${XILINX_QNN_ROOT}/library/rapidjson" ]; then
 	echo "rapidjson already cloned"
 else	
-	git clone https://github.com/Tencent/rapidjson.git ${XILINX_QNN_ROOT}/library/rapidjson
-	git -C ${XILINX_QNN_ROOT}/library/rapidjson/ checkout tags/v1.1.0
+	git clone --branch v1.1.0 https://github.com/Tencent/rapidjson.git ${XILINX_QNN_ROOT}/library/rapidjson
 fi
 
 
