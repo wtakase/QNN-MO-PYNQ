@@ -30,16 +30,15 @@
 XILINX_QNN_ROOT=$(abspath ../..)
 MYSELF=$(abspath $(lastword $(MAKEFILE_LIST)))
 
+VIVADOHLS_INCLUDE_PATH=/home/xilinx/wtakase/vivado_hls/include
+
 CXXFLAGS += -std=c++11
 CXXFLAGS += -O3
 CXXFLAGS += -ftemplate-depth=100
 CXXFLAGS += -pthread
 
 INCLUDES += -I$(XILINX_QNN_ROOT)/library/hls
-
-ifdef VIVADOHLS_INCLUDE_PATH
 INCLUDES += -I$(VIVADOHLS_INCLUDE_PATH)
-endif
 
 obj-o = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 obj-abs = $(abspath $(obj))

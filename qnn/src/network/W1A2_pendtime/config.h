@@ -43,7 +43,7 @@
 #define MAX_MW                  512
 
 // define popcount width >= log2(MAX_MH*MAX_MW)
-#define POPCOUNT_WIDTH          32
+#define POPCOUNT_WIDTH          64
 
 // fully-conn layer memory dimension boundaries
 #define MAX_FC_WMEM             ((MAX_MW * MAX_MH) / (MAX_PE_FC * MAX_SIMD))

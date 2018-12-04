@@ -72,36 +72,27 @@ void DoCompute(ap_uint<DATAWIDTH> * in,	ap_uint<DATAWIDTH> * out,
         const ap_uint<1> enablePool) {
 #pragma HLS DATAFLOW
 
-    hls::stream<ap_uint<DATAWIDTH> > memInStream("memInStream");
-    hls::stream<ap_uint<ACTIVATION_BITS * MAX_MH> > fcStream("fcStream");
-    hls::stream<ap_uint<ACTIVATION_BITS * MAX_MW> > netOutStream("netOutStream");
-    hls::stream<ap_uint<DATAWIDTH> > memOutStream("memOutStream");
+    hls::stream<ap_uint<DATAWIDTH>> memInStream("memInStream");
+    hls::stream<ap_uint<DATAWIDTH>> fcStream("fcStream");
+    hls::stream<ap_uint<DATAWIDTH>> memOutStream("memOutStream");
 
 #pragma HLS STREAM variable=memInStream depth=1
 #pragma HLS STREAM variable=fcStream depth=1
-#pragma HLS STREAM variable=netOutStream depth=1
 #pragma HLS STREAM variable=memOutStream depth=1
 
 #pragma HLS RESOURCE variable=memInStream core=FIFO_LUTRAM
 #pragma HLS RESOURCE variable=fcStream core=FIFO_LUTRAM
-#pragma HLS RESOURCE variable=netOutStream core=FIFO_LUTRAM
 #pragma HLS RESOURCE variable=memOutStream core=FIFO_LUTRAM
 
     const unsigned int inBits = ACTIVATION_BITS * MAX_MH;
-    const unsigned int paddedInBytes = paddedSizeHW(inBits, DATAWIDTH) / 8;
+    const unsigned int paddedInBytes = inBits / 8;
     const unsigned int outBits = ACTIVATION_BITS * MAX_MW;
-    const unsigned int paddedOutBytes = paddedSizeHW(outBits, DATAWIDTH) / 8;
+    const unsigned int paddedOutBytes = outBits / 8;
 
     Mem2Stream<DATAWIDTH, paddedInBytes> (in, memInStream, paddedInBytes);
 
-    StreamingDataWidthConverter<ACTIVATION_BITS * MAX_MH / DATAWIDTH, DATAWIDTH, ACTIVATION_BITS * MAX_MH>
-            (memInStream, fcStream, inBits / DATAWIDTH, DATAWIDTH, ACTIVATION_BITS * MAX_MH);
-
     StreamingFCLayer<MAX_SIMD, MAX_PE_FC, POPCOUNT_WIDTH, MAX_FC_WMEM, MAX_FC_TMEM>
-            (fcStream, netOutStream, fcWeightMem, fcThresMem, IFMCh, OFMCh, 1);
-
-    StreamingDataWidthConverter<MAX_OFM_DIM * MAX_MW, ACTIVATION_BITS * MAX_MW, DATAWIDTH>
-            (netOutStream, memOutStream, outBits / (ACTIVATION_BITS * MAX_MW), ACTIVATION_BITS * MAX_MW, DATAWIDTH);
+            (fcStream, memOutStream, fcWeightMem, fcThresMem, IFMCh, OFMCh, 1);
 
     Stream2Mem<DATAWIDTH, paddedOutBytes> (memOutStream, out, paddedOutBytes);
 }
