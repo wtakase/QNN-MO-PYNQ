@@ -45,8 +45,7 @@ PATH_TO_VIVADO=$(which vivado)
 PATH_TO_VIVADO_HLS=$(which vivado_hls)
 
 if [ -z "$XILINX_QNN_ROOT" ]; then
-    echo "Need to set XILINX_QNN_ROOT"
-    exit 1
+    export XILINX_QNN_ROOT="$( ( cd "$(dirname "$0")/.."; pwd) )"
 fi
 
 if [ -z "$PATH_TO_VIVADO" ]; then

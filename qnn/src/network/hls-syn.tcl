@@ -75,7 +75,7 @@ set_part $config_proj_part
 # use 64-bit AXI MM addresses
 config_interface -m_axi_addr64
 
-csim_design -argv "-n $overlay_json -l $network_json" -compiler clang
+#csim_design -argv "-n $overlay_json -l $network_json" -compiler clang
 # syntesize and export
 create_clock -period $config_clkperiod -name default
 csynth_design

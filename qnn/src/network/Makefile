@@ -33,15 +33,17 @@ MYSELF=$(abspath $(lastword $(MAKEFILE_LIST)))
 #Want to add a new Network? Do it here:
 app_sw_targets  = app_sw_W1A3
 app_sw_targets += app_sw_W1A2
+app_sw_targets += app_sw_W1A2_pendtime
 lib_sw_targets  = lib_sw_W1A3
 lib_sw_targets += lib_sw_W1A2
+lib_sw_targets += lib_sw_W1A2_pendtime
 
 lib_sw_targets_internal = $(foreach lib_target, $(lib_sw_targets), output/$(lib_target).so)
 app_sw_targets_internal = $(foreach app_target, $(app_sw_targets), output/$(app_target).elf)
 
 .PHONY: help .output_dir $(app_sw_targets) $(lib_sw_targets) app_hw lib_hw
 
-lib_linking_hw  = -lcma
+lib_linking_hw  = -lsds_lib
 ifndef NOZIP
 lib_linking 	= -lzip
 else

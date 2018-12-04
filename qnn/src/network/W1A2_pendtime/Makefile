@@ -27,8 +27,35 @@
 #   OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 #   ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from .qnn import *
+XILINX_QNN_ROOT=$(abspath ../..)
+MYSELF=$(abspath $(lastword $(MAKEFILE_LIST)))
 
-from .dorefanet import Dorefanet
-from .tinieryolo import TinierYolo
-from .dorefanet_pendtime import DorefanetPendtime
+CXXFLAGS += -std=c++11
+CXXFLAGS += -O3
+CXXFLAGS += -ftemplate-depth=100
+CXXFLAGS += -pthread
+
+INCLUDES += -I$(XILINX_QNN_ROOT)/library/hls
+
+ifdef VIVADOHLS_INCLUDE_PATH
+INCLUDES += -I$(VIVADOHLS_INCLUDE_PATH)
+endif
+
+obj-o = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
+obj-abs = $(abspath $(obj))
+
+.PHONY: all help
+
+help:
+	@echo "Compile object files"
+	@echo ""
+	@echo "Targets:"
+	@echo "\t $(patsubst %.o,%.o\n\t,$(obj-o))"
+
+all: $(obj-o)
+
+$(obj-o) $(obj-abs): %.o: %.cpp
+	$(CROSS_COMPILE)$(CXX) $(CXXFLAGS) $(DEFINES) $(INCLUDES) -c -o $@ $<
+
+clean:
+	@rm -f $(obj-o)

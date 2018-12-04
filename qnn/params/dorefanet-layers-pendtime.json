@@ -1,0 +1,61 @@
+{
+    "network": "dorefanet-pendtime",
+    "input_image": "../../tests/Test_image/dorefanet-pendtime/input.bin",
+    "verification_image": "../../tests/Test_image/dorefanet-pendtime/verification.bin",   
+    "binparam": "binparam-dorefanet-pendtime",
+    "use_binparams" : true,
+    "binparam_skip" : 0,
+    "layer_skip" : 1,
+    "layers": [{
+            "name": "fc0",
+            "func": "conv_layer",
+            "input_bits": 8,
+            "output_bits": 2,
+            "weight_bits": 8,
+            "threshold_bits": 20,
+            "kernel_shape": 12,
+            "kernel_stride": 4,
+            "input_channels": 3,
+            "input": [29, 0, 0],
+            "output_channels": 68,
+            "output": [512, 0, 0],
+            "padding": 0
+        },
+        {
+            "name": "fc1",
+            "func": "conv_layer",
+            "input_bits": 8,
+            "output_bits": 2,
+            "weight_bits": 8,
+            "threshold_bits": 20,
+            "kernel_shape": 12,
+            "kernel_stride": 4,
+            "input_channels": 3,
+            "input": [512, 0, 0],
+            "output_channels": 68,
+            "output": [512, 0, 0],
+            "padding": 0
+        },
+        {
+            "name": "fc2",
+            "func": "conv_layer",
+            "input_bits": 8,
+            "output_bits": 2,
+            "weight_bits": 8,
+            "threshold_bits": 20,
+            "kernel_shape": 12,
+            "kernel_stride": 4,
+            "input_channels": 3,
+            "input": [512, 0, 0],
+            "output_channels": 68,
+            "output": [512, 0, 0],
+            "padding": 0
+        },
+        {
+            "name": "fc3",
+            "func": "fc_layer",
+            "input": 512,
+            "output": 6
+        }
+    ]
+}
