@@ -72,12 +72,12 @@ _libraries = {}
 
 class Dorefanet:
 
-    def __init__(self, runtime=RUNTIME_HW):
+    def __init__(self, runtime=RUNTIME_HW, hw_libpath=HW_LIBPATH, sw_libpath=SW_LIBPATH):
         self.init = False
         if runtime == RUNTIME_HW:
-            self.lib = _ffi.dlopen(HW_LIBPATH)
+            self.lib = _ffi.dlopen(hw_libpath)
         else:
-            self.lib = _ffi.dlopen(SW_LIBPATH)
+            self.lib = _ffi.dlopen(sw_libpath)
 
     def load_network(self, json_layer=DOREFANET_LAYER_JSON):
         """ Parse network topology from JSON description. """

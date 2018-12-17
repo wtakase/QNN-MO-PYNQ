@@ -73,25 +73,35 @@ void DoCompute(ap_uint<DATAWIDTH> * in,	ap_uint<DATAWIDTH> * out,
 #pragma HLS DATAFLOW
 
     hls::stream<ap_uint<DATAWIDTH>> memInStream("memInStream");
+    hls::stream<ap_uint<MAX_SIMD * ACTIVATION_BITS>> netInStream("netInStream");
+    hls::stream<ap_uint<MAX_PE_FC * ACTIVATION_BITS>> netOutStream("netOutStream");
     hls::stream<ap_uint<DATAWIDTH>> memOutStream("memOutStream");
 
 #pragma HLS STREAM variable=memInStream depth=1
+#pragma HLS STREAM variable=netInStream depth=1
+#pragma HLS STREAM variable=netOutStream depth=1
 #pragma HLS STREAM variable=memOutStream depth=1
 
 #pragma HLS RESOURCE variable=memInStream core=FIFO_LUTRAM
+#pragma HLS RESOURCE variable=netInStream core=FIFO_LUTRAM
+#pragma HLS RESOURCE variable=netOutStream core=FIFO_LUTRAM
 #pragma HLS RESOURCE variable=memOutStream core=FIFO_LUTRAM
 
-    const unsigned int inBits = ACTIVATION_BITS * MAX_MH;
-    const unsigned int paddedInBytes = inBits / 8;
-    const unsigned int outBits = ACTIVATION_BITS * MAX_MW;
-    const unsigned int paddedOutBytes = outBits / 8;
+    const unsigned int inBits = ACTIVATION_BITS * IFMCh;
+    const unsigned int outBits = ACTIVATION_BITS * OFMCh;
 
-    Mem2Stream<DATAWIDTH, paddedInBytes> (in, memInStream, paddedInBytes);
+    Mem2Stream<DATAWIDTH, ACTIVATION_BITS * MAX_MH / 8> (in, memInStream, inBits / 8);
 
-    StreamingFCLayer<MAX_SIMD, MAX_PE_FC, POPCOUNT_WIDTH, MAX_FC_WMEM, MAX_FC_TMEM>
-            (memInStream, memOutStream, fcWeightMem, fcThresMem, IFMCh, OFMCh, 1);
+    StreamingDataWidthConverter<MAX_MW, DATAWIDTH, MAX_SIMD * ACTIVATION_BITS>
+            (memInStream, netInStream, inBits / DATAWIDTH, DATAWIDTH, MAX_SIMD * ACTIVATION_BITS);
 
-    Stream2Mem<DATAWIDTH, paddedOutBytes> (memOutStream, out, paddedOutBytes);
+    StreamingMatrixVector_Precision<MAX_MW, MAX_MH, 1, MAX_SIMD, MAX_PE_FC, WEIGHTS_BITS, THRESHOLDS_BITS, ACTIVATION_BITS, ACTIVATION_BITS, MACC_BITS, MAX_FC_WMEM, MAX_FC_TMEM, FULL_THRESHOLDS>
+            (netInStream, netOutStream, fcWeightMem, fcThresMem, IFMCh, OFMCh, OFMCh);
+
+    StreamingDataWidthConverter<MAX_MW, MAX_PE_FC * ACTIVATION_BITS, DATAWIDTH>
+            (netOutStream, memOutStream, outBits / (MAX_PE_FC * ACTIVATION_BITS), MAX_PE_FC * ACTIVATION_BITS, DATAWIDTH);
+
+    Stream2Mem<DATAWIDTH, ACTIVATION_BITS * MAX_MW / 8> (memOutStream, out, outBits / 8);
 }
 
 void BlackBoxJam(ap_uint<64> * in1, ap_uint<64> * in2, ap_uint<64> * out,
