@@ -31,7 +31,7 @@
 
 // hardware config
 #define MAX_SIMD                64
-#define MAX_PE_FC               32
+#define MAX_PE_FC               64
 
 // layer types
 #define FC_LAYER                0
@@ -39,8 +39,8 @@
 #define CONVPOOL_LAYER          2
 
 // fully-conn layer dimension boundaries
-#define MAX_MH                  512
-#define MAX_MW                  512
+#define MAX_MH                  1024
+#define MAX_MW                  1024
 
 // define popcount width >= log2(MAX_MH)
 #define POPCOUNT_WIDTH          16
