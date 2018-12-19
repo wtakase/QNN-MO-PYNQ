@@ -39,8 +39,8 @@
 #define CONVPOOL_LAYER          2
 
 // fully-conn layer dimension boundaries
-#define MAX_MH                  1024
-#define MAX_MW                  1024
+#define MAX_MH                  2048
+#define MAX_MW                  2048
 
 // define popcount width >= log2(MAX_MH)
 #define POPCOUNT_WIDTH          16

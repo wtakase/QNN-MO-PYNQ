@@ -96,7 +96,7 @@ void DoCompute(ap_uint<DATAWIDTH> * in,	ap_uint<DATAWIDTH> * out,
             (memInStream, netInStream, inBits / DATAWIDTH, DATAWIDTH, MAX_SIMD * ACTIVATION_BITS);
 
     StreamingMatrixVector_Precision<MAX_MW, MAX_MH, 1, MAX_SIMD, MAX_PE_FC, WEIGHTS_BITS, THRESHOLDS_BITS, ACTIVATION_BITS, ACTIVATION_BITS, MACC_BITS, MAX_FC_WMEM, MAX_FC_TMEM, FULL_THRESHOLDS>
-            (netInStream, netOutStream, fcWeightMem, fcThresMem, IFMCh, OFMCh, OFMCh);
+            (netInStream, netOutStream, fcWeightMem, fcThresMem, OFMCh, IFMCh, IFMCh);
 
     StreamingDataWidthConverter<MAX_MW, MAX_PE_FC * ACTIVATION_BITS, DATAWIDTH>
             (netOutStream, memOutStream, outBits / (MAX_PE_FC * ACTIVATION_BITS), MAX_PE_FC * ACTIVATION_BITS, DATAWIDTH);

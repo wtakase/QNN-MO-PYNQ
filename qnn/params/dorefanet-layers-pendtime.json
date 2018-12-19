@@ -17,8 +17,8 @@
             "kernel_stride": 1,
             "input_channels": 29,
             "input": [29, 1, 1],
-            "output_channels": 1024,
-            "output": [1024, 1, 1],
+            "output_channels": 2048,
+            "output": [2048, 1, 1],
             "padding": 0
         },
         {
@@ -30,10 +30,10 @@
             "threshold_bits": 16,
             "kernel_shape": 1,
             "kernel_stride": 1,
-            "input_channels": 1024,
-            "input": [1024, 1, 1],
-            "output_channels": 1024,
-            "output": [1024, 1, 1],
+            "input_channels": 2048,
+            "input": [2048, 1, 1],
+            "output_channels": 2048,
+            "output": [2048, 1, 1],
             "padding": 0
         },
         {
@@ -45,10 +45,10 @@
             "threshold_bits": 16,
             "kernel_shape": 1,
             "kernel_stride": 1,
-            "input_channels": 1024,
-            "input": [1024, 1, 1],
-            "output_channels": 1024,
-            "output": [1024, 1, 1],
+            "input_channels": 2048,
+            "input": [2048, 1, 1],
+            "output_channels": 2048,
+            "output": [2048, 1, 1],
             "padding": 0
         },
         {
@@ -60,10 +60,10 @@
             "threshold_bits": 16,
             "kernel_shape": 1,
             "kernel_stride": 1,
-            "input_channels": 1024,
-            "input": [1024, 1, 1],
-            "output_channels": 1024,
-            "output": [1024, 1, 1],
+            "input_channels": 2048,
+            "input": [2048, 1, 1],
+            "output_channels": 768,
+            "output": [768, 1, 1],
             "padding": 0
         },
         {
@@ -75,16 +75,16 @@
             "threshold_bits": 16,
             "kernel_shape": 1,
             "kernel_stride": 1,
-            "input_channels": 1024,
-            "input": [1024, 1, 1],
-            "output_channels": 1024,
-            "output": [1024, 1, 1],
+            "input_channels": 768,
+            "input": [768, 1, 1],
+            "output_channels": 1792,
+            "output": [1792, 1, 1],
             "padding": 0
         },
         {
             "name": "fc5",
             "func": "fc_layer",
-            "input": 1024,
+            "input": 1792,
             "output": 6
         }
     ]
