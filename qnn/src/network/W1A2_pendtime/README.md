@@ -2,6 +2,10 @@
 
 Hardware description of the overlay for 1 bit weights, 2 bit activation multi-layer offload
 
+![W1A2 pendtime-admxrc3 diagram](https://github.com/wtakase/QNN-MO-PYNQ/raw/support-admxrc3/qnn/src/network/W1A2_pendtime/images/W1A2_pendtime-admxrc3_diagram.png "W1A2_pendtime-admxrc3_diagram")
+
+![W1A2 pendtime-admxrc3 address](https://github.com/wtakase/QNN-MO-PYNQ/raw/support-admxrc3/qnn/src/network/W1A2_pendtime/images/W1A2_pendtime-admxrc3_address.png "W1A2_pendtime-admxrc3_address")
+
 ## Utilization reports
 
 Utilization reports using Vivado Design Suite 2017.4:

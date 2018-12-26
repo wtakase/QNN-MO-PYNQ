@@ -30,7 +30,7 @@
 XILINX_QNN_ROOT=$(abspath ../..)
 MYSELF=$(abspath $(lastword $(MAKEFILE_LIST)))
 
-VIVADOHLS_INCLUDE_PATH=/home/xilinx/wtakase/vivado_hls/include
+VIVADOHLS_INCLUDE_PATH=/root/wtakase/vivado_hls/include
 
 CXXFLAGS += -std=c++11
 CXXFLAGS += -O3

@@ -33,7 +33,7 @@ NETWORKS=$(ls -d W*A*/ | cut -f1 -d'/' | tr "\n" " ")
 if [ "$#" -ne 3 ]; then
   echo "Usage: $0 <network> <platform> <mode>" >&2
   echo "where <network> = $NETWORKS" >&2
-  echo "<platform> = pynqZ1-Z2 ultra96" >&2
+  echo "<platform> = pynqZ1-Z2 ultra96 admxrc3" >&2
   echo "<mode> = regenerate (h)ls only, (b)itstream only, (a)ll" >&2
   exit 1
 fi
@@ -87,8 +87,11 @@ if [[ ("$PLATFORM" == "pynqZ1-Z2") ]]; then
 elif [[ ("$PLATFORM" == "ultra96") ]]; then
   PLATFORM_PART="xczu3eg-sbva484-1-i"
   TARGET_CLOCK="5"
+elif [[ ("$PLATFORM" == "admxrc3") ]]; then
+  PLATFORM_PART="xc7vx690tffg1157-2"
+  TARGET_CLOCK="4"
 else
-  echo "Error: Platform not supported. Please choose between pynqZ1-Z2 and ultra96."
+  echo "Error: Platform not supported. Please choose from pynqZ1-Z2, ultra96, and admxrc3."
   exit 1
 fi
 

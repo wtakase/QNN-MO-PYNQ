@@ -31,19 +31,21 @@
 import os, platform
 import json
 import numpy as np
-import cv2
+#import cv2
 import cffi
 import math
 from ctypes import c_size_t
-from pynq import Overlay, Xlnk
+#from pynq import Overlay, Xlnk
 
+"""
 if os.environ['BOARD'] == 'Ultra96':
 	PLATFORM="ultra96"
 elif os.environ['BOARD'] == 'Pynq-Z1' or os.environ['BOARD'] == 'Pynq-Z2':
 	PLATFORM="pynqZ1-Z2"
 else:
 	raise RuntimeError("Board not supported")
-
+"""
+PLATFORM = "admxrc3"
 
 QNN_ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
 ILSVRC_PIXEL_MEAN_FILE = os.path.join(QNN_ROOT_DIR, "params/ilsvrc_pp_mean.npy")
@@ -122,7 +124,6 @@ class Dorefanet:
         ffi = cffi.FFI()
         img_p = ffi.cast('char *', ffi.from_buffer(img))
         out_p = ffi.cast('char *', ffi.from_buffer(out))
-
         self.lib.singleInference(img_p, img.nbytes, out_p, out.nbytes);
 
 

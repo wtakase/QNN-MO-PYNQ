@@ -129,7 +129,7 @@ void BlackBoxJam(ap_uint<64> * in1, ap_uint<64> * in2, ap_uint<64> * out,
     // signals to be mapped to the AXI master port (hostmem1, hostmem2)
 #pragma HLS INTERFACE m_axi offset=slave port=in1 bundle=hostmem1 depth=1
 #pragma HLS INTERFACE s_axilite port=in1 bundle=control
-#pragma HLS INTERFACE m_axi offset=slave port=out bundle=hostmem1 depth=1
+#pragma HLS INTERFACE m_axi offset=slave port=out bundle=hostmem2 depth=1
 #pragma HLS INTERFACE s_axilite port=out bundle=control
 #pragma HLS INTERFACE m_axi offset=slave port=in2 bundle=hostmem2 depth=1
 #pragma HLS INTERFACE s_axilite port=in2 bundle=control

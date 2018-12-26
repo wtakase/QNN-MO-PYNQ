@@ -31,4 +31,3 @@ from .qnn import *
 
 from .dorefanet import Dorefanet
 from .tinieryolo import TinierYolo
-from .dorefanet_pendtime import DorefanetPendtime

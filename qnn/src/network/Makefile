@@ -30,6 +30,9 @@
 XILINX_QNN_ROOT=$(abspath ..)
 MYSELF=$(abspath $(lastword $(MAKEFILE_LIST)))
 
+ADMXRC3_API=/root/fpga/admxrc3/api-v1_4_16b9
+ADMXRC3_APP_FRAMEWORK=/root/fpga/admxrc3/app_framework-v1_0_0
+
 #Want to add a new Network? Do it here:
 app_sw_targets  = app_sw_W1A3
 app_sw_targets += app_sw_W1A2
@@ -41,9 +44,10 @@ lib_sw_targets += lib_sw_W1A2_pendtime
 lib_sw_targets_internal = $(foreach lib_target, $(lib_sw_targets), output/$(lib_target).so)
 app_sw_targets_internal = $(foreach app_target, $(app_sw_targets), output/$(app_target).elf)
 
-.PHONY: help .output_dir $(app_sw_targets) $(lib_sw_targets) app_hw lib_hw
+.PHONY: help .output_dir $(app_sw_targets) $(lib_sw_targets) app_hw lib_hw lib_hw_admxrc3
 
 lib_linking_hw  = -lsds_lib
+lib_linking_hw_admxrc3 = -ladmxrc3
 ifndef NOZIP
 lib_linking 	= -lzip
 else
@@ -58,7 +62,11 @@ obj_linking += $(XILINX_QNN_ROOT)/library/host/layers.o
 obj_linking += $(XILINX_QNN_ROOT)/library/host/jobber.o
 
 obj_linking_hw = $(XILINX_QNN_ROOT)/library/host/offload-adapter-hw.o
+obj_linking_hw_admxrc3 = $(XILINX_QNN_ROOT)/library/host/offload-adapter-hw-admxrc3.o
 obj_linking_sw = $(XILINX_QNN_ROOT)/library/host/offload-adapter-sw.o
+
+obj_linking_admxrc3  = $(ADMXRC3_APP_FRAMEWORK)/src/admxrc3ut/open.o
+obj_linking_admxrc3 += $(ADMXRC3_APP_FRAMEWORK)/src/admxrc3ut/info.o
 
 app = $(XILINX_QNN_ROOT)/network/sw/main.o
 
@@ -74,6 +82,7 @@ help:
 	@printf "Targets:\n"
 	@printf "\tapp_hw\n"
 	@printf "\tlib_hw\n"
+	@printf "\tlib_hw_admxrc3\n"
 	@printf "%s\n" $(app_sw_targets) | sed 's/ /\n/g' | sed 's/^/\t/g'
 	@printf "%s\n" $(lib_sw_targets) | sed 's/ /\n/g' | sed 's/^/\t/g'
 	@printf "\n"
@@ -95,6 +104,7 @@ all:
 	@$(MAKE) --no-print-directory app_hw
 	@$(MAKE) --no-print-directory $(app_sw_targets)
 	@$(MAKE) --no-print-directory lib_hw
+	@$(MAKE) --no-print-directory lib_hw_admxrc3
 	@$(MAKE) --no-print-directory $(lib_sw_targets)
 
 .output_dir:
@@ -109,6 +119,9 @@ all:
 $(obj_linking_hw) $(obj_linking_sw) $(obj_linking) $(app) $(miscs): %.o: %.cpp
 	@$(MAKE) --no-print-directory -C $(dir $@) $(notdir $@)
 
+$(obj_linking_hw_admxrc3): %.o: %.cpp
+	@$(MAKE) --no-print-directory -C $(dir $@) $(notdir $@)
+
 $(app_sw_targets): export NETWORK = $(shell X=$@; echo $${X#app_sw_*})
 app_hw $(app_sw_targets): .output_dir .rapidjson
 	@if [ -e .SHARED ]; then $(MAKE) --no-print-directory .clean_part; fi
@@ -121,12 +134,26 @@ lib_hw $(lib_sw_targets): .output_dir .rapidjson
 	@$(MAKE) --no-print-directory output/$@.so
 	@touch .SHARED
 
+$(obj_linking_admxrc3): $(ADMXRC3_APP_FRAMEWORK)/src/admxrc3ut/open.c $(ADMXRC3_APP_FRAMEWORK)/src/admxrc3ut/info.c $(ADMXRC3_APP_FRAMEWORK)/include/admxrc3ut.h
+	$(CROSS_COMPILE)$(CXX) $(CXXFLAGS) -pthread -o $@ $<
+
+lib_hw_admxrc3: export CXXFLAGS = -fPIC -shared -I$(ADMXRC3_API)/include -I$(ADMXRC3_APP_FRAMEWORK)/include
+lib_hw_admxrc3: .output_dir .rapidjson $(obj_linking_admxrc3)
+#lib_hw_admxrc3: .output_dir .rapidjson
+	@if [ ! -e .SHARED ]; then $(MAKE) --no-print-directory .clean_part; fi
+	@$(MAKE) --no-print-directory output/$@.so
+	@touch .SHARED
+
 $(app_sw_targets_internal) $(lib_sw_targets_internal): $(obj_linking) $(obj_linking_sw) $(app)
 	$(CROSS_COMPILE)$(CXX) $(CXXFLAGS) -pthread -o $(XILINX_QNN_ROOT)/network/$@ $(app) $(obj_linking) $(obj_linking_sw) $(lib_linking)
 
 output/app_hw.elf output/lib_hw.so : $(obj_linking) $(obj_linking_hw) $(app)
 	$(CROSS_COMPILE)$(CXX) $(CXXFLAGS) -pthread -o $(XILINX_QNN_ROOT)/network/$@ $(app) $(obj_linking) $(obj_linking_hw) $(lib_linking) $(lib_linking_hw)
 
+output/app_hw_admxrc3.elf output/lib_hw_admxrc3.so : $(obj_linking) $(obj_linking_admxrc3) $(obj_linking_hw_admxrc3) $(app)
+	$(CROSS_COMPILE)$(CXX) $(CXXFLAGS) -pthread -o $(XILINX_QNN_ROOT)/network/$@ $(app) $(obj_linking) $(obj_linking_admxrc3) $(obj_linking_hw_admxrc3) $(lib_linking) $(lib_linking_hw_admxrc3)
+#output/app_hw_admxrc3.elf output/lib_hw_admxrc3.so : $(obj_linking) $(obj_linking_hw_admxrc3) $(app)
+#	$(CROSS_COMPILE)$(CXX) $(CXXFLAGS) -pthread -o $(XILINX_QNN_ROOT)/network/$@ $(app) $(obj_linking) $(obj_linking_hw_admxrc3) $(lib_linking) $(lib_linking_hw_admxrc3)
 
 reset_xlnk:
 	echo "import pynq.xlnk; xlnk = pynq.Xlnk(); xlnk.xlnk_reset();" | python3.6

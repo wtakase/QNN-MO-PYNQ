@@ -30,7 +30,7 @@
 XILINX_QNN_ROOT=$(abspath ../..)
 MYSELF=$(abspath $(lastword $(MAKEFILE_LIST)))
 
-VIVADOHLS_INCLUDE_PATH=/home/xilinx/wtakase/vivado_hls/include
+VIVADOHLS_INCLUDE_PATH=/root/wtakase/vivado_hls/include
 
 CXXFLAGS += -std=c++11
 CXXFLAGS += -O2
@@ -39,6 +39,7 @@ CXXFLAGS += -O2
 INCLUDES += -I$(XILINX_QNN_ROOT)/library/rapidjson/include
 INCLUDES += -I$(XILINX_QNN_ROOT)/library/driver
 INCLUDES += -I$(VIVADOHLS_INCLUDE_PATH)
+INCLUDES += -I/root/wtakase/PYNQ/sdbuild/packages/libsds/xlnkutils
 
 obj-o = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 obj-abs = $(abspath $(obj))
